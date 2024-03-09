@@ -1,37 +1,44 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-
     [Header("Movement")]
     [SerializeField] private float speed;
+    private float originalSpeed; // Variable para guardar la velocidad original
     private Rigidbody rb;
+
     private float posX;
     private float posZ;
     private Vector3 movimiento;
-    
+
     [Header("Jump")]
+    
     [SerializeField] private float jumpForce;
+    private float originalJumpForce;
     [SerializeField] private LayerMask layer;
     [SerializeField] private bool isCollider;
 
     private float camRayDistance = 1000f;
+    private float duracionPowerUp = 10f; // Duración del aumento de velocidad
+
+    public void AumentarSalto(float aumentoFactor)
+    {
+        jumpForce *= aumentoFactor; // Aumentar la fuerza de salto por el factor de aumento
+    }
+
+    public void RestaurarSalto()
+    {
+        jumpForce = originalJumpForce; // Restaurar la fuerza de salto original
+    }
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        originalSpeed = speed; // Guardar la velocidad original al inicioz
+        originalJumpForce = jumpForce; 
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         Move();
         Jump();
@@ -48,15 +55,27 @@ public class Player : MonoBehaviour
 
         rb.MovePosition(transform.position + movimiento);
     }
+
     private void Jump()
     {
         RaycastHit hit;
         isCollider = Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, 1f, layer);
-        // Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.down) * hit.distance, Color.black);
+
         if (Input.GetKeyDown(KeyCode.Space) && isCollider)
         {
             rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
         }
+    }
+
+    public void AumentarVelocidad(float aumento)
+    {
+        speed *= aumento; // Multiplicar la velocidad por el aumento
+        Invoke("RestaurarVelocidad", duracionPowerUp); // Restaurar la velocidad original después de un tiempo específico
+    }
+
+    public void RestaurarVelocidad()
+    {
+        speed = originalSpeed; // Restaurar la velocidad original
     }
 
     public void Turning()
@@ -64,7 +83,7 @@ public class Player : MonoBehaviour
         Ray camRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit floorhit;
 
-        if(Physics.Raycast(camRay, out floorhit, camRayDistance,layer))
+        if (Physics.Raycast(camRay, out floorhit, camRayDistance, layer))
         {
             Vector3 playerToMouse = floorhit.point - transform.position;
             playerToMouse.y = 0f;
@@ -74,21 +93,3 @@ public class Player : MonoBehaviour
         }
     }
 }
-
-
-// if(Input.GetKey(KeyCode.D))
-        // {
-        //     transform.Translate(speed * Time.deltaTime, 0, 0);
-        // }
-        // if(Input.GetKey(KeyCode.A))
-        // {
-        //     transform.Translate(- speed * Time.deltaTime ,0, 0);
-        // }
-        // if(Input.GetKey(KeyCode.W))
-        // {
-        //     transform.Translate(0, 0, speed * Time.deltaTime);
-        // }
-        // if(Input.GetKey(KeyCode.S))
-        // {
-        //     transform.Translate(0, 0, - speed * Time.deltaTime);
-        // }

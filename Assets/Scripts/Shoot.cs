@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Shoot : MonoBehaviour
 {
-
     public int damage = 20;
+    private int originalDamage; // Variable para guardar el daño original
     public float fireRate = 0.15f;
     public float weaponRange = 100f;
     private float tiempo;
@@ -14,18 +14,20 @@ public class Shoot : MonoBehaviour
     private int disparableMask;
     private LineRenderer disparoLinea;
     private Player _player;
-    // Start is called before the first frame update
-    private void Awake() {
+
+    private void Awake()
+    {
         disparableMask = LayerMask.GetMask("disparable");
         disparoLinea = GetComponent<LineRenderer>();
         _player = GetComponentInParent<Player>();
+        originalDamage = damage; // Guardar el daño original al inicio
     }
+
     void Start()
     {
         
     }
 
-    // Update is called once per frame
     void Update()
     {
         tiempo += Time.deltaTime;
@@ -54,7 +56,8 @@ public class Shoot : MonoBehaviour
         {
             VidaEnemigo vidaEnemigo = disparoHit.collider.GetComponent<VidaEnemigo>();
             
-            if (vidaEnemigo != null){
+            if (vidaEnemigo != null)
+            {
                 vidaEnemigo.DamageRecibido(damage, disparoHit.point);
             }
             disparoLinea.SetPosition(1, disparoHit.point);
@@ -63,5 +66,15 @@ public class Shoot : MonoBehaviour
         {
             disparoLinea.SetPosition(1, disparoRay.origin + disparoRay.direction * weaponRange);
         }
+    }
+
+    public void AumentarDamage(int aumento)
+    {
+        damage += aumento; // Aumentar el daño
+    }
+
+    public void RestaurarDamage()
+    {
+        damage = originalDamage; // Restaurar el daño original
     }
 }

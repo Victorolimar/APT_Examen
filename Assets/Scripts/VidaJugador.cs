@@ -18,7 +18,8 @@ public class VidaJugador : MonoBehaviour
     private Player player;
     private Shoot shoot;
 
-    private void Awake() {
+    private void Awake()
+    {
         vidaActual = vidaInicial;
         vidaSlider.maxValue = vidaInicial;
         vidaSlider.value = vidaInicial;
@@ -31,11 +32,21 @@ public class VidaJugador : MonoBehaviour
         damaged = true;
         vidaActual -= amount;
         vidaSlider.value = vidaActual;
-        if(vidaActual <= 0 && !isDead)
+        if (vidaActual <= 0 && !isDead)
         {
             Death();
         }
     }
+
+    public void AumentarVida(int cantidad)
+    {
+        vidaActual += cantidad;
+        vidaActual = Mathf.Clamp(vidaActual, 0, vidaInicial);
+        vidaSlider.value = vidaActual;
+        // Si deseas actualizar alguna interfaz de usuario adicional aquí, como mostrar un mensaje de "Vida aumentada", puedes hacerlo también.
+    }
+
+
 
     public void Death()
     {

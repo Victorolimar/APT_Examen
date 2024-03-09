@@ -5,15 +5,18 @@ using UnityEngine;
 public class EnemigoManager : MonoBehaviour
 {
     public GameObject enemigo;
-    public float spawnTime;
+    public float spawnTime; // Cambiar a public para que sea accesible desde fuera de la clase
     public Transform spawnPoint;
     private VidaJugador _vidaJugador;
-    private void Awake() {
+
+    private void Awake()
+    {
         _vidaJugador = GameObject.FindGameObjectWithTag("Player").GetComponent<VidaJugador>();
     }
+
     void Start()
     {
-        if(_vidaJugador.vidaActual <= 0)
+        if (_vidaJugador.vidaActual <= 0)
         {
             return;
         }
@@ -22,11 +25,17 @@ public class EnemigoManager : MonoBehaviour
 
     void Update()
     {
-        
+
     }
 
     public void Spawn()
     {
         Instantiate(enemigo, spawnPoint.position, spawnPoint.rotation);
+    }
+
+    // Método para modificar el tiempo de spawn
+    public void ModificarSpawnTime(float multiplicador)
+    {
+        spawnTime *= multiplicador;
     }
 }
